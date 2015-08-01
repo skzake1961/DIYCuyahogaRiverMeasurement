@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"> 
+    <title>Weather Report of Cuyohaga River</title>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+      function drawChart() {
+		  
+		// Add Public key of the sparkfun stream
+        var public_key = 'zDgzovXQ8xSN22r7GyKp';
+
+        // JSONP request
+        var jsonData = $.ajax({
+          url: 'https://data.sparkfun.com/output/' + public_key + '.json',
+          data: {page: 1},
+          dataType: 'jsonp',
+        }).done(function (results) {
+
+          var data = new google.visualization.DataTable();
+
+          data.addColumn('datetime', 'Time');
+          data.addColumn('number', 'Temp F');
+          data.addColumn('number', 'Temp C');
+
+          $.each(results, function (i, row) {
+            data.addRow([
+              (new Date(row.timestamp)),
+              parseFloat(row.tempf),
+              parseFloat(row.tempc)
+            ]);
+          });
+      
+        // Full Stacked options for Horizantal and Vertical Axix         
+        var options_fullStacked = {
+		  title: 'Cuyahoga Weather Reading',fontSize: 14,	
+          hAxis: {title: 'TimeStamp',  titleTextStyle: {color: '#666'}},		  
+          isStacked: 'relative',
+          legend: {position: 'top', maxLines: 3},
+          vAxis: { minValue: 0 }
+        };
+        
+        // Fetch chart_div container and initate graph
+		var chart = new google.visualization.AreaChart(document.getElementById('chart_div')).draw(data,options_fullStacked);
+
+              });
+		  }
+      // load chart lib
+      google.load('visualization', '1', { packages: ['corechart']});
+
+      // call drawChart once google charts is loaded
+      google.setOnLoadCallback(drawChart);
+      
+    </script>
+  </head>
+  <body>
+    <div id="chart_div" style="width: 1100px; height: 600px;"></div>
+  </body>
+</html>
